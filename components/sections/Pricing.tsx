@@ -28,7 +28,7 @@ export default function Pricing() {
     <section id="pricing" className="bg-canvas py-28 lg:py-36">
       <div className="mx-auto max-w-7xl px-6 lg:px-8">
         {/* Header */}
-        <div className="mb-4 overflow-hidden">
+        <div className="mb-4">
           <motion.p
             initial={{ opacity: 0 }}
             whileInView={{ opacity: 1 }}
@@ -44,7 +44,7 @@ export default function Pricing() {
               whileInView={{ y: 0 }}
               viewport={{ once: true }}
               transition={{ duration: 0.85, ease: EXPO }}
-              className="font-display font-black leading-none tracking-[-0.02em] text-snow text-[clamp(2rem,5vw,3.5rem)]"
+              className="font-display font-black leading-none tracking-tight text-snow text-[clamp(2rem,5vw,3.5rem)]"
             >
               Honest pricing. Nothing hidden.
             </motion.h2>
@@ -65,11 +65,11 @@ export default function Pricing() {
           </span>
         </motion.div>
 
-        {/* Pricing grid */}
+        {/* Pricing grid — staggered entrance, 120ms apart */}
         <div className="grid grid-cols-1 md:grid-cols-12 gap-4 items-start">
           {/* Build Fee */}
           <motion.div
-            initial={{ opacity: 0, y: 28 }}
+            initial={{ opacity: 0, y: 32 }}
             whileInView={{ opacity: 1, y: 0 }}
             whileHover={{ y: -5 }}
             viewport={{ once: true, amount: 0.1 }}
@@ -103,12 +103,12 @@ export default function Pricing() {
 
           {/* Plan A */}
           <motion.div
-            initial={{ opacity: 0, y: 28 }}
+            initial={{ opacity: 0, y: 32 }}
             whileInView={{ opacity: 1, y: 0 }}
             whileHover={{ y: -5 }}
             viewport={{ once: true, amount: 0.1 }}
             transition={{
-              opacity: { duration: 0.6, delay: 0.15, ease: EXPO },
+              opacity: { duration: 0.6, delay: 0.22, ease: EXPO },
               y: SPRING,
             }}
             className="md:col-span-4 cursor-default rounded-[1.75rem] border border-rim/50 bg-surface/60 p-1.5"
@@ -141,17 +141,17 @@ export default function Pricing() {
             </div>
           </motion.div>
 
-          {/* Plan B — featured */}
+          {/* Plan B — featured, with CSS pulse on border glow */}
           <motion.div
-            initial={{ opacity: 0, y: 28 }}
+            initial={{ opacity: 0, y: 32 }}
             whileInView={{ opacity: 1, y: 0 }}
             whileHover={{ y: -5 }}
             viewport={{ once: true, amount: 0.1 }}
             transition={{
-              opacity: { duration: 0.6, delay: 0.2, ease: EXPO },
+              opacity: { duration: 0.6, delay: 0.34, ease: EXPO },
               y: SPRING,
             }}
-            className="md:col-span-5 cursor-default rounded-[1.75rem] border border-ember/30 bg-surface/60 p-1.5 shadow-[0_0_48px_-12px_rgba(232,81,26,0.2)]"
+            className="md:col-span-5 cursor-default rounded-[1.75rem] border border-ember/30 bg-surface/60 p-1.5 animate-ember-pulse"
           >
             <div className="h-full rounded-[calc(1.75rem-6px)] bg-raised/80 p-7 shadow-[inset_0_1px_0_rgba(232,81,26,0.08)]">
               <div className="mb-4 flex items-center justify-between">
@@ -201,7 +201,7 @@ export default function Pricing() {
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.5, delay: 0.2, ease: EXPO }}
-          className="mt-10 max-w-xl mx-auto text-center text-sm leading-relaxed text-ash"
+          className="mt-10 mx-auto max-w-xl text-center text-sm leading-relaxed text-ash"
         >
           Cancel anytime with 30 days written notice. No cancellation fees. All your files
           delivered within 5 business days at no charge. No questions asked.{' '}

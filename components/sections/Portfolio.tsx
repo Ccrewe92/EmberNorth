@@ -14,7 +14,7 @@ export default function Portfolio() {
     <section id="portfolio" className="bg-canvas py-28 lg:py-36">
       <div className="mx-auto max-w-7xl px-6 lg:px-8">
         {/* Header */}
-        <div className="mb-14 max-w-xl overflow-hidden">
+        <div className="mb-14 max-w-xl">
           <motion.p
             initial={{ opacity: 0 }}
             whileInView={{ opacity: 1 }}
@@ -30,7 +30,7 @@ export default function Portfolio() {
               whileInView={{ y: 0 }}
               viewport={{ once: true }}
               transition={{ duration: 0.85, ease: EXPO }}
-              className="font-display font-black leading-none tracking-[-0.02em] text-snow text-[clamp(2rem,5vw,3.5rem)]"
+              className="font-display font-black leading-none tracking-tight text-snow text-[clamp(2rem,5vw,3.5rem)]"
             >
               Real sites. Real businesses.
             </motion.h2>
@@ -47,9 +47,9 @@ export default function Portfolio() {
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-12 gap-4 items-start">
-          {/* Main project card */}
+          {/* Main project card — slides up, then browser chrome draws in */}
           <motion.div
-            initial={{ opacity: 0, y: 32 }}
+            initial={{ opacity: 0, y: 40 }}
             whileInView={{ opacity: 1, y: 0 }}
             whileHover={{ y: -8 }}
             viewport={{ once: true, amount: 0.1 }}
@@ -60,27 +60,60 @@ export default function Portfolio() {
             className="md:col-span-8 cursor-default rounded-[1.75rem] border border-rim/50 bg-surface/60 p-1.5 group"
           >
             <div className="overflow-hidden rounded-[calc(1.75rem-6px)] bg-raised/60 shadow-[inset_0_1px_0_rgba(255,255,255,0.04)]">
-              {/* Browser chrome */}
-              <div className="flex items-center gap-2.5 border-b border-rim/40 bg-canvas/40 px-5 py-3">
-                <span className="h-2.5 w-2.5 rounded-full bg-rim" />
-                <span className="h-2.5 w-2.5 rounded-full bg-rim" />
-                <span className="h-2.5 w-2.5 rounded-full bg-rim" />
-                <span className="ml-3 flex-1 truncate rounded-full bg-rim/40 px-3 py-1 text-xs text-ash">
-                  {project.url.replace('https://', '')}
-                </span>
-                <a
+              {/* Browser chrome — dots pop in, URL slides in */}
+              <div className="flex items-center gap-0 border-b border-rim/40 bg-canvas/40 px-5 py-3 overflow-hidden">
+                <div className="flex items-center gap-2.5 shrink-0">
+                  {[0, 1, 2].map((i) => (
+                    <motion.span
+                      key={i}
+                      initial={{ scale: 0, opacity: 0 }}
+                      whileInView={{ scale: 1, opacity: 1 }}
+                      viewport={{ once: true }}
+                      transition={{
+                        type: 'spring',
+                        stiffness: 400,
+                        damping: 22,
+                        delay: 0.2 + i * 0.07,
+                      }}
+                      className="h-2.5 w-2.5 rounded-full bg-rim"
+                    />
+                  ))}
+                </div>
+                <motion.div
+                  initial={{ width: 0, opacity: 0 }}
+                  whileInView={{ width: '100%', opacity: 1 }}
+                  viewport={{ once: true }}
+                  transition={{ duration: 0.45, delay: 0.46, ease: EXPO }}
+                  className="ml-3 overflow-hidden"
+                  style={{ minWidth: 0 }}
+                >
+                  <span className="block truncate rounded-full bg-rim/40 px-3 py-1 text-xs text-ash">
+                    {project.url.replace('https://', '')}
+                  </span>
+                </motion.div>
+                <motion.a
+                  initial={{ opacity: 0 }}
+                  whileInView={{ opacity: 1 }}
+                  viewport={{ once: true }}
+                  transition={{ duration: 0.3, delay: 0.7 }}
                   href={project.url}
                   target="_blank"
                   rel="noopener noreferrer"
                   aria-label={`Open ${project.name}`}
-                  className="text-smoke transition-colors hover:text-snow"
+                  className="ml-2 shrink-0 text-smoke transition-colors hover:text-snow"
                 >
                   <ArrowUpRight size={14} weight="bold" />
-                </a>
+                </motion.a>
               </div>
 
-              {/* Preview placeholder */}
-              <div className="relative aspect-video flex flex-col items-center justify-center gap-4 bg-canvas/60">
+              {/* Preview — fades in after chrome */}
+              <motion.div
+                initial={{ opacity: 0 }}
+                whileInView={{ opacity: 1 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.5, delay: 0.65 }}
+                className="relative aspect-video flex flex-col items-center justify-center gap-4 bg-canvas/60"
+              >
                 <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,rgba(232,81,26,0.06)_0%,transparent_70%)]" />
                 <span className="select-none font-display font-black leading-none text-[clamp(3rem,10vw,7rem)] text-ember/10">
                   RC
@@ -92,7 +125,7 @@ export default function Portfolio() {
                     <span className="text-ember">]]</span>
                   </span>
                 </p>
-              </div>
+              </motion.div>
 
               {/* Card footer */}
               <div className="flex items-start justify-between gap-4 px-7 py-6">
@@ -150,12 +183,9 @@ export default function Portfolio() {
               className="cursor-default rounded-[1.75rem] border border-rim/30 bg-surface/30 p-1.5"
             >
               <div className="rounded-[calc(1.75rem-6px)] bg-canvas/40 p-7 shadow-[inset_0_1px_0_rgba(255,255,255,0.03)]">
-                <p className="mb-2 font-display font-black text-snow text-lg">
-                  More coming soon.
-                </p>
+                <p className="mb-2 font-display font-black text-snow text-lg">More coming soon.</p>
                 <p className="text-sm leading-relaxed text-smoke">
-                  We build one site at a time and do it right. Your project gets full
-                  attention.
+                  We build one site at a time and do it right. Your project gets full attention.
                 </p>
                 <a
                   href="#contact"

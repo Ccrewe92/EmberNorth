@@ -25,13 +25,13 @@ export default function Problem() {
   return (
     <section id="services" className="bg-canvas py-28 lg:py-40">
       <div className="mx-auto max-w-7xl px-6 lg:px-8">
-        {/* Heading */}
+        {/* Heading — slides in from left */}
         <div className="mb-20 lg:mb-28">
           <motion.p
-            initial={{ opacity: 0 }}
-            whileInView={{ opacity: 1 }}
+            initial={{ opacity: 0, x: -20 }}
+            whileInView={{ opacity: 1, x: 0 }}
             viewport={{ once: true }}
-            transition={{ duration: 0.5 }}
+            transition={{ duration: 0.5, ease: EXPO }}
             className="mb-6 text-[11px] font-semibold uppercase tracking-[0.2em] text-smoke"
           >
             The Problem
@@ -42,7 +42,7 @@ export default function Problem() {
               whileInView={{ y: 0 }}
               viewport={{ once: true }}
               transition={{ duration: 0.9, ease: EXPO }}
-              className="font-display font-black leading-[1.0] tracking-[-0.02em] text-snow text-[clamp(2.75rem,7vw,5.75rem)] max-w-5xl"
+              className="font-display font-black leading-none tracking-[-0.02em] text-snow text-[clamp(2.75rem,7vw,5.75rem)] max-w-5xl"
             >
               Most web agencies own your website.
             </motion.h2>
@@ -59,14 +59,14 @@ export default function Problem() {
           </motion.p>
         </div>
 
-        {/* Editorial two-column comparison */}
+        {/* Two-column comparison — slide in from opposite sides */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 lg:gap-24">
-          {/* Old Way */}
+          {/* Old Way — slides from left, slight rotation */}
           <motion.div
-            initial={{ opacity: 0, y: 24 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.6, ease: EXPO }}
+            initial={{ opacity: 0, x: -48, rotate: -1.5 }}
+            whileInView={{ opacity: 1, x: 0, rotate: 0 }}
+            viewport={{ once: true, amount: 0.15 }}
+            transition={{ duration: 0.75, ease: EXPO }}
           >
             <p className="mb-8 border-b border-rim/30 pb-4 text-[11px] font-semibold uppercase tracking-[0.2em] text-smoke/50">
               The Old Way
@@ -75,10 +75,10 @@ export default function Problem() {
               {oldWay.map((item, i) => (
                 <motion.li
                   key={i}
-                  initial={{ opacity: 0, x: -14 }}
+                  initial={{ opacity: 0, x: -16 }}
                   whileInView={{ opacity: 1, x: 0 }}
                   viewport={{ once: true }}
-                  transition={{ duration: 0.45, delay: 0.1 + i * 0.07, ease: EXPO }}
+                  transition={{ duration: 0.4, delay: 0.1 + i * 0.07, ease: EXPO }}
                   className="flex items-center gap-4"
                 >
                   <X size={13} weight="bold" className="shrink-0 text-ash/50" />
@@ -90,12 +90,12 @@ export default function Problem() {
             </ul>
           </motion.div>
 
-          {/* EmberNorth Way */}
+          {/* EmberNorth Way — slides from right with delay */}
           <motion.div
-            initial={{ opacity: 0, y: 24 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.6, delay: 0.1, ease: EXPO }}
+            initial={{ opacity: 0, x: 48 }}
+            whileInView={{ opacity: 1, x: 0 }}
+            viewport={{ once: true, amount: 0.15 }}
+            transition={{ duration: 0.75, delay: 0.1, ease: EXPO }}
           >
             <p className="mb-8 border-b border-ember/25 pb-4 text-[11px] font-semibold uppercase tracking-[0.2em] text-ember/70">
               The EmberNorth Way
@@ -104,10 +104,10 @@ export default function Problem() {
               {newWay.map((item, i) => (
                 <motion.li
                   key={i}
-                  initial={{ opacity: 0, x: 14 }}
+                  initial={{ opacity: 0, x: 16 }}
                   whileInView={{ opacity: 1, x: 0 }}
                   viewport={{ once: true }}
-                  transition={{ duration: 0.45, delay: 0.1 + i * 0.07, ease: EXPO }}
+                  transition={{ duration: 0.4, delay: 0.15 + i * 0.07, ease: EXPO }}
                   className="flex items-center gap-4"
                 >
                   <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-ember/15">

@@ -2,6 +2,7 @@ import type { Metadata } from 'next'
 import { Syne, Manrope } from 'next/font/google'
 import './globals.css'
 import { localBusinessSchema } from '@/lib/schema'
+import MotionWrapper from '@/components/MotionWrapper'
 
 const syne = Syne({
   subsets: ['latin'],
@@ -51,7 +52,9 @@ export default function RootLayout({
           }}
         />
       </head>
-      <body className="min-h-dvh antialiased">{children}</body>
+      <body className="min-h-dvh antialiased">
+        <MotionWrapper>{children}</MotionWrapper>
+      </body>
     </html>
   )
 }

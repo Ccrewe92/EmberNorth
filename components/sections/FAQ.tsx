@@ -2,20 +2,19 @@
 
 import { useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import { Plus, Minus } from '@phosphor-icons/react'
+import { CaretDown } from '@phosphor-icons/react'
 import { faqSchema } from '@/lib/schema'
 
 const EXPO = [0.16, 1, 0.3, 1] as const
-const ease = EXPO
 
 const faqs = [
   {
     q: 'Do I own the website?',
-    a: 'Yes. 100%. The code, the files, and the domain are yours from the moment the build fee is paid. We don\'t retain any ownership or rights. Ever.',
+    a: "Yes. 100%. The code, the files, and the domain are yours from the moment the build fee is paid. We don't retain any ownership or rights. Ever.",
   },
   {
     q: 'What if I want to cancel the monthly plan?',
-    a: '30 days written notice. No cancellation fees, no exit fees. We\'ll deliver every file within 5 business days at no charge. No questions asked.',
+    a: "30 days written notice. No cancellation fees, no exit fees. We'll deliver every file within 5 business days at no charge. No questions asked.",
   },
   {
     q: "What's included in the monthly plan?",
@@ -23,7 +22,7 @@ const faqs = [
   },
   {
     q: 'How long does a build take?',
-    a: 'Most sites are ready for review within 5-7 business days of receiving your content. We build it first and show you — you only pay if you\'re happy with it.',
+    a: "Most sites are ready for review within 5-7 business days of receiving your content. We build it first and show you — you only pay if you're happy with it.",
   },
   {
     q: 'Do you work outside Calgary?',
@@ -31,11 +30,11 @@ const faqs = [
   },
   {
     q: 'What makes EmberNorth different from other agencies?',
-    a: 'We build the site before you pay anything. You own everything from day one. Our contract says so explicitly. No lock-in, no exit fees, no surprises. Most agencies can\'t say any of that.',
+    a: "We build the site before you pay anything. You own everything from day one. Our contract says so explicitly. No lock-in, no exit fees, no surprises. Most agencies can't say any of that.",
   },
   {
     q: 'What technology do you use?',
-    a: 'Next.js — one of the fastest, most modern web frameworks available. Your site will load faster, rank better on Google, and be easier to build on in the future than anything built on WordPress or Wix.',
+    a: "Next.js — one of the fastest, most modern web frameworks available. Your site will load faster, rank better on Google, and be easier to build on in the future than anything built on WordPress or Wix.",
   },
 ]
 
@@ -52,23 +51,29 @@ function AccordionItem({
 }) {
   return (
     <motion.div
-      initial={{ opacity: 0, y: 16 }}
+      initial={{ opacity: 0, y: 14 }}
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true, amount: 0.3 }}
-      transition={{ duration: 0.4, delay: index * 0.05, ease }}
-      className="border-b border-rim/30 last:border-0"
+      transition={{ duration: 0.4, delay: index * 0.05, ease: EXPO }}
+      className={`border-b border-rim/30 last:border-0 rounded-xl -mx-4 px-4 transition-colors duration-300 ${
+        isOpen ? 'bg-surface/25' : ''
+      }`}
     >
       <button
         onClick={onToggle}
         aria-expanded={isOpen}
         className="flex w-full items-start justify-between gap-6 py-6 text-left group"
       >
-        <span className="text-[1.0625rem] font-semibold text-snow leading-snug group-hover:text-ember transition-colors duration-200">
+        <span className="text-[1.0625rem] font-semibold leading-snug text-snow transition-colors duration-200 group-hover:text-ember">
           {faq.q}
         </span>
-        <span className="mt-0.5 shrink-0 flex h-7 w-7 items-center justify-center rounded-full border border-rim/60 text-smoke group-hover:border-ember/30 group-hover:text-ember transition-all duration-200">
-          {isOpen ? <Minus size={14} weight="bold" /> : <Plus size={14} weight="bold" />}
-        </span>
+        <motion.span
+          animate={{ rotate: isOpen ? 180 : 0 }}
+          transition={{ duration: 0.3, ease: EXPO }}
+          className="mt-0.5 shrink-0 flex h-7 w-7 items-center justify-center rounded-full border border-rim/60 text-smoke transition-colors duration-200 group-hover:border-ember/30 group-hover:text-ember"
+        >
+          <CaretDown size={14} weight="bold" />
+        </motion.span>
       </button>
 
       <AnimatePresence initial={false}>
@@ -77,9 +82,12 @@ function AccordionItem({
             initial={{ height: 0, opacity: 0 }}
             animate={{ height: 'auto', opacity: 1 }}
             exit={{ height: 0, opacity: 0 }}
-            transition={{ duration: 0.35, ease }}
+            transition={{
+              height: { type: 'spring', stiffness: 300, damping: 30 },
+              opacity: { duration: 0.2 },
+            }}
           >
-            <p className="pb-6 text-smoke leading-relaxed max-w-2xl">{faq.a}</p>
+            <p className="pb-6 leading-relaxed text-smoke max-w-2xl">{faq.a}</p>
           </motion.div>
         )}
       </AnimatePresence>
@@ -127,7 +135,7 @@ export default function FAQ() {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ duration: 0.5, delay: 0.2, ease: EXPO }}
-                className="text-smoke leading-relaxed"
+                className="leading-relaxed text-smoke"
               >
                 Straight answers. No fluff.
               </motion.p>

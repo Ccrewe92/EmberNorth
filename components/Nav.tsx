@@ -31,9 +31,9 @@ export default function Nav() {
     <>
       <header className="fixed top-0 left-0 right-0 z-50 flex justify-center pt-5 px-4">
         <motion.nav
-          initial={{ opacity: 0, y: -16 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5, ease: [0.32, 0.72, 0, 1] }}
+          initial={{ y: '-120%' }}
+          animate={{ y: 0 }}
+          transition={{ duration: 0.7, delay: 0.1, ease: [0.16, 1, 0.3, 1] }}
           className={`
             flex items-center gap-2 px-3 py-2.5 rounded-full
             transition-all duration-500

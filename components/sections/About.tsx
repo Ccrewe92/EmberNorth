@@ -9,9 +9,15 @@ export default function About() {
   return (
     <section id="about" className="bg-surface/30 py-28 lg:py-40">
       <div className="mx-auto max-w-7xl px-6 lg:px-8">
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-16 lg:gap-24 items-start">
-          {/* Left — label + photo */}
-          <div className="lg:col-span-4">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-16 lg:gap-24 items-center">
+          {/* Photo — slides in from left simultaneously with text */}
+          <motion.div
+            initial={{ opacity: 0, x: -48 }}
+            whileInView={{ opacity: 1, x: 0 }}
+            viewport={{ once: true, amount: 0.2 }}
+            transition={{ duration: 0.75, ease: EXPO }}
+            className="lg:col-span-4"
+          >
             <motion.p
               initial={{ opacity: 0 }}
               whileInView={{ opacity: 1 }}
@@ -21,13 +27,7 @@ export default function About() {
             >
               About
             </motion.p>
-            <motion.div
-              initial={{ opacity: 0, y: 24 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.65, delay: 0.1, ease: EXPO }}
-              className="rounded-[1.75rem] border border-rim/40 bg-surface/60 p-1.5 aspect-4/5"
-            >
+            <div className="rounded-[1.75rem] border border-rim/40 bg-surface/60 p-1.5 aspect-4/5">
               <div className="h-full rounded-[calc(1.75rem-6px)] bg-canvas/60 flex flex-col items-center justify-center gap-4 shadow-[inset_0_1px_0_rgba(255,255,255,0.03)]">
                 <span className="select-none font-display font-black text-[5rem] leading-none text-ember/15">
                   CC
@@ -37,11 +37,17 @@ export default function About() {
                   <span className="text-ember">]]</span>
                 </span>
               </div>
-            </motion.div>
-          </div>
+            </div>
+          </motion.div>
 
-          {/* Right — bio */}
-          <div className="lg:col-span-8 flex flex-col justify-center">
+          {/* Bio — slides in from right simultaneously */}
+          <motion.div
+            initial={{ opacity: 0, x: 48 }}
+            whileInView={{ opacity: 1, x: 0 }}
+            viewport={{ once: true, amount: 0.2 }}
+            transition={{ duration: 0.75, ease: EXPO }}
+            className="lg:col-span-8 flex flex-col justify-center"
+          >
             <div className="overflow-hidden mb-8">
               <motion.h2
                 initial={{ y: '105%' }}
@@ -58,7 +64,7 @@ export default function About() {
               initial={{ opacity: 0, y: 16 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
-              transition={{ duration: 0.6, delay: 0.2, ease: EXPO }}
+              transition={{ duration: 0.6, delay: 0.15, ease: EXPO }}
               className="text-lg leading-relaxed text-smoke"
             >
               I got tired of watching contractors and tradespeople get burned by web agencies
@@ -72,7 +78,7 @@ export default function About() {
               initial={{ opacity: 0, y: 16 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
-              transition={{ duration: 0.6, delay: 0.3, ease: EXPO }}
+              transition={{ duration: 0.6, delay: 0.25, ease: EXPO }}
               className="mt-5 text-lg leading-relaxed text-smoke"
             >
               I work with Calgary contractors and small businesses who need a fast, professional
@@ -84,7 +90,7 @@ export default function About() {
               initial={{ opacity: 0, y: 14 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
-              transition={{ duration: 0.5, delay: 0.4, ease: EXPO }}
+              transition={{ duration: 0.5, delay: 0.35, ease: EXPO }}
               className="mt-10 pt-8 border-t border-rim/30 flex flex-wrap gap-4"
             >
               <a
@@ -100,7 +106,7 @@ export default function About() {
                 {BRAND.email}
               </a>
             </motion.div>
-          </div>
+          </motion.div>
         </div>
       </div>
     </section>

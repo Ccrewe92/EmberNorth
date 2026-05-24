@@ -42,6 +42,24 @@ body {
   animation: marquee 40s linear infinite;
 }
 
+@keyframes ember-pulse {
+  0%, 100% { box-shadow: 0 0 24px -12px rgba(232,81,26,0.18); }
+  50%       { box-shadow: 0 0 56px -8px  rgba(232,81,26,0.45); }
+}
+
+@utility animate-ember-pulse {
+  animation: ember-pulse 2.5s ease-in-out infinite;
+}
+
+@keyframes breathe {
+  0%, 100% { transform: scale(1); }
+  50%       { transform: scale(1.012); }
+}
+
+@utility animate-breathe {
+  animation: breathe 4s ease-in-out infinite 1.5s;
+}
+
 @media (prefers-reduced-motion: reduce) {
   *,
   *::before,

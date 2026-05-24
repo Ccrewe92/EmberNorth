@@ -6,12 +6,7 @@ import { HouseLine, CurrencyDollar, RocketLaunch, type Icon } from '@phosphor-ic
 const EXPO = [0.16, 1, 0.3, 1] as const
 const SPRING = { type: 'spring', stiffness: 250, damping: 22 } as const
 
-type Pillar = {
-  num: string
-  Icon: Icon
-  title: string
-  body: string
-}
+type Pillar = { num: string; Icon: Icon; title: string; body: string }
 
 const pillars: Pillar[] = [
   {
@@ -42,7 +37,8 @@ export default function TheWay() {
   return (
     <section className="bg-surface/30 py-28 lg:py-36">
       <div className="mx-auto max-w-7xl px-6 lg:px-8">
-        <div className="overflow-hidden mb-14 max-w-xl">
+        {/* Section header */}
+        <div className="mb-14 max-w-xl">
           <motion.p
             initial={{ opacity: 0 }}
             whileInView={{ opacity: 1 }}
@@ -58,45 +54,67 @@ export default function TheWay() {
               whileInView={{ y: 0 }}
               viewport={{ once: true }}
               transition={{ duration: 0.85, ease: EXPO }}
-              className="font-display font-black text-snow leading-none tracking-[-0.02em] text-[clamp(2.25rem,5.5vw,3.75rem)]"
+              className="font-display font-black text-snow leading-none tracking-tight text-[clamp(2.25rem,5.5vw,3.75rem)]"
             >
               Three things we never compromise on.
             </motion.h2>
           </div>
         </div>
 
-        {/* Asymmetric bento grid */}
+        {/* Asymmetric bento — float wrappers separate from entrance */}
         <div className="grid grid-cols-1 md:grid-cols-12 gap-4">
           {/* Large feature card */}
           <motion.div
-            initial={{ opacity: 0, y: 28 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            whileHover={{ y: -6 }}
-            viewport={{ once: true, amount: 0.15 }}
-            transition={{
-              opacity: { duration: 0.6, delay: 0.1, ease: EXPO },
-              y: SPRING,
-            }}
-            className="md:col-span-7 cursor-default rounded-[1.75rem] border border-rim/50 bg-surface/60 p-1.5"
+            animate={{ y: [0, -5, 0] }}
+            transition={{ duration: 3.8, repeat: Infinity, ease: 'easeInOut', delay: 0 }}
+            className="md:col-span-7"
           >
-            <div className="flex h-full min-h-64 flex-col justify-between rounded-[calc(1.75rem-6px)] bg-raised/60 p-9 shadow-[inset_0_1px_0_rgba(255,255,255,0.04)]">
-              <div className="mb-6 flex items-start justify-between">
-                <span className="select-none font-display font-black text-[5rem] leading-none text-ember/12">
-                  {p0.num}
-                </span>
-                <span className="flex h-11 w-11 items-center justify-center rounded-2xl border border-ember/20 bg-ember/10 text-ember">
-                  <P0Icon size={22} weight="duotone" />
-                </span>
+            <motion.div
+              initial={{ opacity: 0, y: 32 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              whileHover={{ y: -6 }}
+              viewport={{ once: true, amount: 0.15 }}
+              transition={{
+                opacity: { duration: 0.65, delay: 0.1, ease: EXPO },
+                y: SPRING,
+              }}
+              className="cursor-default rounded-[1.75rem] border border-rim/50 bg-surface/60 p-1.5"
+            >
+              <div className="flex h-full min-h-64 flex-col justify-between rounded-[calc(1.75rem-6px)] bg-raised/60 p-9 shadow-[inset_0_1px_0_rgba(255,255,255,0.04)]">
+                {/* Oversized number — fades in first as watermark */}
+                <div className="mb-6 flex items-start justify-between">
+                  <motion.span
+                    initial={{ opacity: 0, scale: 1.3 }}
+                    whileInView={{ opacity: 1, scale: 1 }}
+                    viewport={{ once: true }}
+                    transition={{ duration: 0.6, delay: 0.15, ease: EXPO }}
+                    className="select-none font-display font-black text-[5rem] leading-none text-ember/12"
+                  >
+                    {p0.num}
+                  </motion.span>
+                  <motion.span
+                    initial={{ opacity: 0, scale: 0.8 }}
+                    whileInView={{ opacity: 1, scale: 1 }}
+                    viewport={{ once: true }}
+                    transition={{ type: 'spring', stiffness: 300, damping: 20, delay: 0.25 }}
+                    className="flex h-11 w-11 items-center justify-center rounded-2xl border border-ember/20 bg-ember/10 text-ember"
+                  >
+                    <P0Icon size={22} weight="duotone" />
+                  </motion.span>
+                </div>
+                <motion.div
+                  initial={{ opacity: 0, y: 12 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ duration: 0.5, delay: 0.3, ease: EXPO }}
+                >
+                  <h3 className="mb-3 font-display font-black text-snow text-2xl lg:text-3xl tracking-tight">
+                    {p0.title}
+                  </h3>
+                  <p className="max-w-md leading-relaxed text-smoke">{p0.body}</p>
+                </motion.div>
               </div>
-              <div>
-                <h3 className="mb-3 font-display font-black text-snow text-2xl lg:text-3xl tracking-tight">
-                  {p0.title}
-                </h3>
-                <p className="max-w-md leading-relaxed text-smoke">
-                  {p0.body}
-                </p>
-              </div>
-            </div>
+            </motion.div>
           </motion.div>
 
           {/* Stacked smaller cards */}
@@ -106,34 +124,60 @@ export default function TheWay() {
               return (
                 <motion.div
                   key={pillar.num}
-                  initial={{ opacity: 0, y: 28 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  whileHover={{ y: -5 }}
-                  viewport={{ once: true, amount: 0.15 }}
+                  animate={{ y: [0, -5, 0] }}
                   transition={{
-                    opacity: { duration: 0.6, delay: 0.2 + i * 0.1, ease: EXPO },
-                    y: SPRING,
+                    duration: 3.5 + i * 0.4,
+                    repeat: Infinity,
+                    ease: 'easeInOut',
+                    delay: (i + 1) * 0.9,
                   }}
-                  className="flex-1 cursor-default rounded-[1.75rem] border border-rim/50 bg-surface/60 p-1.5"
+                  className="flex-1"
                 >
-                  <div className="flex h-full flex-col justify-between rounded-[calc(1.75rem-6px)] bg-raised/60 p-7 shadow-[inset_0_1px_0_rgba(255,255,255,0.04)]">
-                    <div className="mb-4 flex items-center justify-between">
-                      <span className="select-none font-display font-black text-4xl leading-none text-ember/12">
-                        {pillar.num}
-                      </span>
-                      <span className="flex h-9 w-9 items-center justify-center rounded-xl border border-ember/20 bg-ember/10 text-ember">
-                        <PillarIcon size={18} weight="duotone" />
-                      </span>
+                  <motion.div
+                    initial={{ opacity: 0, y: 32 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    whileHover={{ y: -5 }}
+                    viewport={{ once: true, amount: 0.15 }}
+                    transition={{
+                      opacity: { duration: 0.6, delay: 0.2 + i * 0.1, ease: EXPO },
+                      y: SPRING,
+                    }}
+                    className="cursor-default h-full rounded-[1.75rem] border border-rim/50 bg-surface/60 p-1.5"
+                  >
+                    <div className="flex h-full flex-col justify-between rounded-[calc(1.75rem-6px)] bg-raised/60 p-7 shadow-[inset_0_1px_0_rgba(255,255,255,0.04)]">
+                      <div className="mb-4 flex items-center justify-between">
+                        <motion.span
+                          initial={{ opacity: 0, scale: 1.3 }}
+                          whileInView={{ opacity: 1, scale: 1 }}
+                          viewport={{ once: true }}
+                          transition={{ duration: 0.6, delay: 0.25 + i * 0.1, ease: EXPO }}
+                          className="select-none font-display font-black text-4xl leading-none text-ember/12"
+                        >
+                          {pillar.num}
+                        </motion.span>
+                        <motion.span
+                          initial={{ opacity: 0, scale: 0.8 }}
+                          whileInView={{ opacity: 1, scale: 1 }}
+                          viewport={{ once: true }}
+                          transition={{ type: 'spring', stiffness: 300, damping: 20, delay: 0.35 + i * 0.1 }}
+                          className="flex h-9 w-9 items-center justify-center rounded-xl border border-ember/20 bg-ember/10 text-ember"
+                        >
+                          <PillarIcon size={18} weight="duotone" />
+                        </motion.span>
+                      </div>
+                      <motion.div
+                        initial={{ opacity: 0, y: 10 }}
+                        whileInView={{ opacity: 1, y: 0 }}
+                        viewport={{ once: true }}
+                        transition={{ duration: 0.5, delay: 0.35 + i * 0.1, ease: EXPO }}
+                      >
+                        <h3 className="mb-2 font-display font-black text-snow text-xl tracking-tight">
+                          {pillar.title}
+                        </h3>
+                        <p className="text-sm leading-relaxed text-smoke">{pillar.body}</p>
+                      </motion.div>
                     </div>
-                    <div>
-                      <h3 className="mb-2 font-display font-black text-snow text-xl tracking-tight">
-                        {pillar.title}
-                      </h3>
-                      <p className="text-sm leading-relaxed text-smoke">
-                        {pillar.body}
-                      </p>
-                    </div>
-                  </div>
+                  </motion.div>
                 </motion.div>
               )
             })}

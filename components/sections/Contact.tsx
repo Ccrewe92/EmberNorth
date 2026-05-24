@@ -2,7 +2,7 @@
 
 import { useState } from 'react'
 import { motion } from 'framer-motion'
-import { Phone, EnvelopeSimple, CheckCircle } from '@phosphor-icons/react'
+import { Phone, EnvelopeSimple } from '@phosphor-icons/react'
 import { BRAND } from '@/lib/constants'
 
 const EXPO = [0.16, 1, 0.3, 1] as const
@@ -17,9 +17,10 @@ function fadeUp(delay: number) {
 }
 
 const inputClass =
-  'w-full rounded-xl border border-rim/50 bg-surface/60 px-4 py-3 text-snow text-sm placeholder:text-ash focus:outline-none focus:border-ember/40 focus:bg-surface transition-all duration-200'
+  'w-full rounded-xl border border-rim/50 bg-surface/60 px-4 py-3 text-snow text-sm placeholder:text-ash outline-none transition-all duration-200 focus:border-ember/50 focus:bg-surface focus:shadow-[0_0_0_3px_rgba(232,81,26,0.1)]'
 
-const labelClass = 'block text-xs font-semibold uppercase tracking-[0.12em] text-smoke mb-2'
+const labelClass =
+  'block text-[11px] font-semibold uppercase tracking-[0.14em] text-smoke mb-2'
 
 export default function Contact() {
   const [sent, setSent] = useState(false)
@@ -90,27 +91,26 @@ export default function Contact() {
             <motion.div {...fadeUp(0.15)} className="mt-10 flex flex-col gap-4">
               <a
                 href={`tel:${BRAND.tel}`}
-                className="group inline-flex items-center gap-4 rounded-2xl border border-rim/40 bg-surface/40 px-5 py-4 transition-all duration-300 hover:border-ember/30 hover:bg-surface"
+                className="group inline-flex items-center gap-4 rounded-2xl border border-rim/40 bg-surface/40 px-5 py-4 transition-all duration-200 hover:border-ember/30 hover:bg-surface"
               >
                 <span className="flex h-10 w-10 items-center justify-center rounded-xl border border-ember/20 bg-ember/10 text-ember">
                   <Phone size={18} weight="duotone" />
                 </span>
                 <div>
                   <p className="text-xs text-smoke mb-0.5">Call us</p>
-                  <p className="text-snow font-semibold text-sm">{BRAND.phone}</p>
+                  <p className="text-sm font-semibold text-snow">{BRAND.phone}</p>
                 </div>
               </a>
-
               <a
                 href={`mailto:${BRAND.email}`}
-                className="group inline-flex items-center gap-4 rounded-2xl border border-rim/40 bg-surface/40 px-5 py-4 transition-all duration-300 hover:border-ember/30 hover:bg-surface"
+                className="group inline-flex items-center gap-4 rounded-2xl border border-rim/40 bg-surface/40 px-5 py-4 transition-all duration-200 hover:border-ember/30 hover:bg-surface"
               >
                 <span className="flex h-10 w-10 items-center justify-center rounded-xl border border-ember/20 bg-ember/10 text-ember">
                   <EnvelopeSimple size={18} weight="duotone" />
                 </span>
                 <div>
                   <p className="text-xs text-smoke mb-0.5">Email us</p>
-                  <p className="text-snow font-semibold text-sm">{BRAND.email}</p>
+                  <p className="text-sm font-semibold text-snow">{BRAND.email}</p>
                 </div>
               </a>
             </motion.div>
@@ -121,14 +121,36 @@ export default function Contact() {
             <div className="rounded-[1.75rem] border border-rim/50 bg-surface/60 p-1.5">
               <div className="rounded-[calc(1.75rem-6px)] bg-raised/60 p-7 shadow-[inset_0_1px_0_rgba(255,255,255,0.04)]">
                 {sent ? (
-                  <div className="flex flex-col items-center justify-center py-14 gap-4 text-center">
-                    <CheckCircle size={48} weight="duotone" className="text-ember" />
+                  <div className="flex flex-col items-center justify-center py-14 gap-5 text-center">
+                    {/* Animated SVG checkmark */}
+                    <motion.div
+                      initial={{ scale: 0.5, opacity: 0 }}
+                      animate={{ scale: 1, opacity: 1 }}
+                      transition={{ type: 'spring', stiffness: 300, damping: 20 }}
+                      className="flex h-16 w-16 items-center justify-center rounded-full border border-ember/30 bg-ember/10"
+                    >
+                      <svg viewBox="0 0 24 24" fill="none" className="h-8 w-8" aria-hidden="true">
+                        <motion.path
+                          d="M5 13l4 4L19 7"
+                          stroke="#E8511A"
+                          strokeWidth={2.5}
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          initial={{ pathLength: 0, opacity: 0 }}
+                          animate={{ pathLength: 1, opacity: 1 }}
+                          transition={{ duration: 0.5, delay: 0.25, ease: EXPO }}
+                        />
+                      </svg>
+                    </motion.div>
                     <h3 className="font-display font-black text-snow text-xl tracking-tight">
                       Message sent.
                     </h3>
-                    <p className="text-smoke max-w-xs leading-relaxed">
+                    <p className="max-w-xs leading-relaxed text-smoke">
                       Your default email app should have opened. If not, reach us directly at{' '}
-                      <a href={`mailto:${BRAND.email}`} className="text-snow underline underline-offset-2">
+                      <a
+                        href={`mailto:${BRAND.email}`}
+                        className="text-snow underline underline-offset-2"
+                      >
                         {BRAND.email}
                       </a>
                     </p>
@@ -138,73 +160,47 @@ export default function Contact() {
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
                       <div>
                         <label htmlFor="name" className={labelClass}>Your Name</label>
-                        <input
-                          id="name"
-                          name="name"
-                          type="text"
-                          required
-                          autoComplete="name"
-                          placeholder="Clinton Crewe"
-                          className={inputClass}
-                        />
+                        <input id="name" name="name" type="text" required autoComplete="name" placeholder="Clinton Crewe" className={inputClass} />
                       </div>
                       <div>
                         <label htmlFor="business" className={labelClass}>Business Name</label>
-                        <input
-                          id="business"
-                          name="business"
-                          type="text"
-                          required
-                          autoComplete="organization"
-                          placeholder="Reliant Contractors"
-                          className={inputClass}
-                        />
+                        <input id="business" name="business" type="text" required autoComplete="organization" placeholder="Reliant Contractors" className={inputClass} />
                       </div>
                     </div>
-
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
                       <div>
                         <label htmlFor="phone" className={labelClass}>Phone</label>
-                        <input
-                          id="phone"
-                          name="phone"
-                          type="tel"
-                          autoComplete="tel"
-                          placeholder="(780) 555-0123"
-                          className={inputClass}
-                        />
+                        <input id="phone" name="phone" type="tel" autoComplete="tel" placeholder="(780) 555-0123" className={inputClass} />
                       </div>
                       <div>
-                        <label htmlFor="email" className={labelClass}>Email <span className="text-ember">*</span></label>
-                        <input
-                          id="email"
-                          name="email"
-                          type="email"
-                          required
-                          autoComplete="email"
-                          placeholder="you@yourbusiness.ca"
-                          className={inputClass}
-                        />
+                        <label htmlFor="email" className={labelClass}>
+                          Email <span className="text-ember">*</span>
+                        </label>
+                        <input id="email" name="email" type="email" required autoComplete="email" placeholder="you@yourbusiness.ca" className={inputClass} />
                       </div>
                     </div>
-
                     <div>
                       <label htmlFor="description" className={labelClass}>Tell us about your business</label>
-                      <textarea
-                        id="description"
-                        name="description"
-                        rows={4}
-                        placeholder="What you do, where you're based, what you need..."
-                        className={`${inputClass} resize-none`}
-                      />
+                      <textarea id="description" name="description" rows={4} placeholder="What you do, where you're based, what you need..." className={`${inputClass} resize-none`} />
                     </div>
 
                     <button
                       type="submit"
                       disabled={loading}
-                      className="w-full rounded-full bg-ember px-6 py-3.5 text-sm font-semibold text-snow transition-all duration-300 hover:bg-ember/90 active:scale-[0.98] disabled:opacity-60 disabled:cursor-not-allowed shadow-[0_0_20px_-4px_rgba(232,81,26,0.35)]"
+                      className="w-full rounded-full bg-ember px-6 py-3.5 text-sm font-semibold text-snow shadow-[0_0_20px_-4px_rgba(232,81,26,0.35)] transition-all duration-200 hover:bg-ember/90 active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-60"
                     >
-                      {loading ? 'Sending...' : 'Send message'}
+                      {loading ? (
+                        <span className="inline-flex items-center justify-center gap-2">
+                          <motion.span
+                            animate={{ rotate: 360 }}
+                            transition={{ duration: 0.75, repeat: Infinity, ease: 'linear' }}
+                            className="block h-4 w-4 rounded-full border-2 border-snow/30 border-t-snow"
+                          />
+                          Sending...
+                        </span>
+                      ) : (
+                        'Send message'
+                      )}
                     </button>
 
                     <p className="text-center text-xs text-ash">
