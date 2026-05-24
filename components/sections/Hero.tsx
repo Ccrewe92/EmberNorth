@@ -5,6 +5,7 @@ import { motion, useScroll, useTransform, animate } from 'framer-motion'
 import { ArrowRight, Phone } from '@phosphor-icons/react'
 import { BRAND, PRICING } from '@/lib/constants'
 import EmberParticles from '@/components/EmberParticles'
+import ENMark from '@/components/ENMark'
 
 const EXPO = [0.16, 1, 0.3, 1] as const
 
@@ -67,20 +68,13 @@ export default function Hero() {
       {/* Canvas ember particles — desktop only, paused by prefers-reduced-motion */}
       <EmberParticles />
 
-      {/* EN background mark — blur→sharp entrance, then slow breathe */}
+      {/* EN mark — flame draws itself on load, breathes after */}
       <motion.div
         style={{ y: bgY }}
         aria-hidden="true"
-        className="pointer-events-none select-none absolute right-[-3%] top-[5%] font-display font-black leading-none text-[44vw] text-ember"
+        className="pointer-events-none select-none absolute right-[-4%] top-[3%] w-[26vw] min-w-45"
       >
-        <motion.span
-          initial={{ opacity: 0.01, scale: 1.08, filter: 'blur(16px)' }}
-          animate={{ opacity: 0.04, scale: 1, filter: 'blur(0px)' }}
-          transition={{ duration: 1.2, ease: EXPO }}
-          className="block animate-breathe"
-        >
-          EN
-        </motion.span>
+        <ENMark />
       </motion.div>
 
       {/* Ambient glow */}
