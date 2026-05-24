@@ -1,0 +1,54 @@
+@import "tailwindcss";
+
+@theme {
+  --color-canvas: oklch(13.5% 0.008 45);
+  --color-surface: oklch(18% 0.007 45);
+  --color-raised: oklch(22% 0.007 45);
+  --color-rim: oklch(27% 0.006 45);
+  --color-ember: #e8511a;
+  --color-ember-glow: oklch(57% 0.165 40 / 0.18);
+  --color-snow: oklch(93% 0.009 85);
+  --color-smoke: oklch(64% 0.008 85);
+  --color-ash: oklch(44% 0.006 85);
+}
+
+@theme inline {
+  --font-display: var(--font-syne);
+  --font-body: var(--font-manrope);
+}
+
+* {
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  background-color: var(--color-canvas);
+  color: var(--color-snow);
+  font-family: var(--font-body);
+}
+
+@keyframes marquee {
+  from { transform: translateX(0); }
+  to   { transform: translateX(-50%); }
+}
+
+@utility animate-marquee {
+  animation: marquee 40s linear infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
