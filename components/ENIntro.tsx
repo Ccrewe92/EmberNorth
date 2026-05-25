@@ -4,43 +4,98 @@ import { useState, useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 
 const EXPO = [0.16, 1, 0.3, 1] as const
-const LIN  = [0, 0, 1, 1]     as const  // constant-speed pathLength
+const LIN  = [0, 0, 1, 1]     as const   // constant-speed wipe
 
-// Stroke data: path string + start/end for leading ember dot
-// viewBox 0 0 220 100 — E: x 22–82, N: x 128–198
-const STROKES = [
-  { id: 'ev', d: 'M 22 8 L 22 92',   x1: 22,  y1: 8,  x2: 22,  y2: 92, delay: 0.00, dur: 0.30 },
-  { id: 'et', d: 'M 22 8 L 82 8',    x1: 22,  y1: 8,  x2: 82,  y2: 8,  delay: 0.30, dur: 0.20 },
-  { id: 'eb', d: 'M 22 92 L 82 92',  x1: 22,  y1: 92, x2: 82,  y2: 92, delay: 0.30, dur: 0.20 },
-  { id: 'em', d: 'M 22 50 L 69 50',  x1: 22,  y1: 50, x2: 69,  y2: 50, delay: 0.50, dur: 0.16 },
-  { id: 'nl', d: 'M 128 8 L 128 92', x1: 128, y1: 8,  x2: 128, y2: 92, delay: 0.66, dur: 0.30 },
-  { id: 'nd', d: 'M 128 8 L 198 92', x1: 128, y1: 8,  x2: 198, y2: 92, delay: 0.96, dur: 0.24 },
-  { id: 'nr', d: 'M 198 8 L 198 92', x1: 198, y1: 8,  x2: 198, y2: 92, delay: 1.20, dur: 0.20 },
-] as const
-// Drawing completes ~1.40s. Burned-in state settles by ~2.10s.
+// Flame gradient for the bright reveal layer
+const FLAME_GRAD: React.CSSProperties = {
+  backgroundImage: 'linear-gradient(to bottom, #FFD580 0%, #FF7A2F 45%, #C0390A 100%)',
+  WebkitBackgroundClip: 'text',
+  WebkitTextFillColor: 'transparent',
+  backgroundClip: 'text',
+  filter: 'drop-shadow(0 0 28px rgba(232,81,26,0.55))',
+}
 
-// Scatter — embers break free after drawing and arc toward the hero below
-const SCATTER = [
-  { id: 0,  cx: 22,  cy: 8,  dx: -18, dy: 160, delay: 1.42, r: 2.8, color: '#FFD580' },
-  { id: 1,  cx: 82,  cy: 8,  dx:  25, dy: 190, delay: 1.45, r: 2.0, color: '#FF7A2F' },
-  { id: 2,  cx: 52,  cy: 50, dx: -10, dy: 210, delay: 1.43, r: 3.2, color: '#FFB347' },
-  { id: 3,  cx: 52,  cy: 92, dx:  14, dy: 175, delay: 1.48, r: 2.2, color: '#E8511A' },
-  { id: 4,  cx: 22,  cy: 92, dx: -22, dy: 155, delay: 1.51, r: 1.8, color: '#FF7A2F' },
-  { id: 5,  cx: 128, cy: 8,  dx: -12, dy: 200, delay: 1.44, r: 3.0, color: '#FFD580' },
-  { id: 6,  cx: 128, cy: 92, dx: -20, dy: 165, delay: 1.49, r: 2.0, color: '#FFB347' },
-  { id: 7,  cx: 163, cy: 50, dx:  18, dy: 195, delay: 1.46, r: 2.5, color: '#E8511A' },
-  { id: 8,  cx: 198, cy: 8,  dx:  28, dy: 210, delay: 1.47, r: 2.0, color: '#FF7A2F' },
-  { id: 9,  cx: 198, cy: 92, dx:  12, dy: 170, delay: 1.53, r: 2.4, color: '#FFD580' },
-  { id: 10, cx: 37,  cy: 8,  dx:  -5, dy: 185, delay: 1.55, r: 1.6, color: '#FFB347' },
-  { id: 11, cx: 155, cy: 8,  dx:  10, dy: 180, delay: 1.50, r: 1.8, color: '#E8511A' },
+// Ember particles — positioned as % of the combined letter container
+// Positive dy = fall toward hero; negative dy = rise (sparks flying off)
+const EMBERS = [
+  // E phase (delay 0 – 0.85s)
+  { id: 0,  l: '3%',  t: '15%', dx: -22, dy: -65, delay: 0.08, dur: 0.80, sz: 8,  col: '#FFD580' },
+  { id: 1,  l: '18%', t: '5%',  dx:  14, dy: -55, delay: 0.28, dur: 0.90, sz: 6,  col: '#FF7A2F' },
+  { id: 2,  l: '32%', t: '40%', dx: -10, dy: -50, delay: 0.50, dur: 0.75, sz: 7,  col: '#FFB347' },
+  { id: 3,  l: '43%', t: '20%', dx:  18, dy: -45, delay: 0.72, dur: 0.85, sz: 5,  col: '#FFD580' },
+  // N phase (delay 0.7 – 1.55s)
+  { id: 4,  l: '56%', t: '10%', dx: -18, dy: -60, delay: 0.75, dur: 0.80, sz: 8,  col: '#FFD580' },
+  { id: 5,  l: '68%', t: '30%', dx:  16, dy: -50, delay: 0.98, dur: 0.90, sz: 6,  col: '#FF7A2F' },
+  { id: 6,  l: '80%', t: '15%', dx: -12, dy: -55, delay: 1.22, dur: 0.75, sz: 7,  col: '#FFB347' },
+  { id: 7,  l: '92%', t: '40%', dx:  20, dy: -40, delay: 1.48, dur: 0.85, sz: 5,  col: '#FFD580' },
+  // Post-reveal scatter — fall toward hero bottom
+  { id: 8,  l: '15%', t: '70%', dx: -28, dy: 130, delay: 1.60, dur: 1.10, sz: 10, col: '#E8511A' },
+  { id: 9,  l: '48%', t: '55%', dx:  12, dy: 155, delay: 1.65, dur: 1.20, sz: 12, col: '#FF7A2F' },
+  { id: 10, l: '82%', t: '65%', dx:  32, dy: 140, delay: 1.70, dur: 1.05, sz: 9,  col: '#FFD580' },
+  { id: 11, l: '30%', t: '85%', dx: -15, dy: 120, delay: 1.75, dur: 1.15, sz: 8,  col: '#FFB347' },
+  { id: 12, l: '65%', t: '80%', dx:  22, dy: 110, delay: 1.80, dur: 1.00, sz: 7,  col: '#E8511A' },
 ] as const
+
+function Letter({
+  char,
+  revealDelay,
+  burnDelay,
+}: {
+  char: string
+  revealDelay: number
+  burnDelay: number
+}) {
+  const fontSize = 'clamp(5rem, 17vw, 10.5rem)'
+  const base: React.CSSProperties = {
+    fontSize,
+    lineHeight: 1,
+    fontWeight: 900,
+    letterSpacing: '-0.02em',
+    userSelect: 'none',
+  }
+
+  return (
+    <div className="relative">
+      {/* Bright flame layer — clips from left, then fades out */}
+      <motion.div
+        className="font-display"
+        style={{ ...base, ...FLAME_GRAD }}
+        initial={{ clipPath: 'inset(0 100% 0 0)' }}
+        animate={{ clipPath: 'inset(0 0% 0 0)', opacity: [1, 1, 1, 0] }}
+        transition={{
+          clipPath: { duration: 0.85, delay: revealDelay, ease: LIN },
+          opacity: {
+            duration: 1.20, delay: revealDelay,
+            times: [0, 0.65, 0.80, 1],
+          },
+        }}
+      >
+        {char}
+      </motion.div>
+
+      {/* Burned-in layer — smoldering dark mark that stays */}
+      <motion.div
+        className="font-display absolute inset-0"
+        style={{
+          ...base,
+          color: '#7A2000',
+          filter: 'drop-shadow(0 0 10px rgba(192,57,10,0.45))',
+        }}
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 0.38 }}
+        transition={{ duration: 0.6, delay: burnDelay, ease: 'easeOut' }}
+      >
+        {char}
+      </motion.div>
+    </div>
+  )
+}
 
 export default function ENIntro() {
   const [show, setShow] = useState(true)
 
   useEffect(() => {
-    // Hold long enough for burned state to be appreciated (~1.5s) before exiting
-    const t = setTimeout(() => setShow(false), 3700)
+    const t = setTimeout(() => setShow(false), 3800)
     return () => clearTimeout(t)
   }, [])
 
@@ -52,125 +107,39 @@ export default function ENIntro() {
           exit={{ opacity: 0, scale: 1.04 }}
           transition={{ duration: 0.6, ease: [0.32, 0, 0.67, 0] }}
         >
-          <div className="w-[58vw] max-w-125 min-w-57.5">
-            <svg
-              viewBox="0 0 220 100"
-              fill="none"
-              xmlns="http://www.w3.org/2000/svg"
-              className="w-full h-auto"
-              style={{ overflow: 'visible' }}
-            >
-              <defs>
-                {/* Bright amber→ember gradient for the drawing trail */}
-                <linearGradient id="ig" x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="0%"   stopColor="#FFD580" />
-                  <stop offset="45%"  stopColor="#FF7A2F" />
-                  <stop offset="100%" stopColor="#C0390A" />
-                </linearGradient>
+          {/* Letter area + ember overlay */}
+          <div className="relative flex items-center gap-[3vw]">
+            <Letter char="E" revealDelay={0.00} burnDelay={0.90} />
+            <Letter char="N" revealDelay={0.70} burnDelay={1.60} />
 
-                {/* Bloom for the bright drawing trail */}
-                <filter id="sg" x="-80%" y="-80%" width="260%" height="260%">
-                  <feGaussianBlur stdDeviation="3" result="b" />
-                  <feMerge><feMergeNode in="b" /><feMergeNode in="SourceGraphic" /></feMerge>
-                </filter>
-
-                {/* Softer glow for the burned-in marks — like cooling coal */}
-                <filter id="bg" x="-60%" y="-60%" width="220%" height="220%">
-                  <feGaussianBlur stdDeviation="1.8" result="b" />
-                  <feMerge><feMergeNode in="b" /><feMergeNode in="SourceGraphic" /></feMerge>
-                </filter>
-
-                {/* Tight bright halo for the leading ember dot */}
-                <filter id="dg" x="-300%" y="-300%" width="700%" height="700%">
-                  <feGaussianBlur stdDeviation="5" result="b" />
-                  <feMerge><feMergeNode in="b" /><feMergeNode in="SourceGraphic" /></feMerge>
-                </filter>
-              </defs>
-
-              {STROKES.map((s) => {
-                const drawDone  = s.delay + s.dur
-                const fadeDur   = s.dur + 0.85  // how long the drawing layer animates total
-                const t1 = s.dur / fadeDur               // normalized time: draw complete
-                const t2 = (s.dur + 0.40) / fadeDur     // normalized time: start fade
-
-                return (
-                  <g key={s.id}>
-                    {/* ── Drawing trail: bright, draws itself, then fades out ── */}
-                    <motion.path
-                      d={s.d}
-                      stroke="url(#ig)"
-                      strokeWidth={10}
-                      strokeLinecap="round"
-                      fill="none"
-                      filter="url(#sg)"
-                      initial={{ pathLength: 0, opacity: 0 }}
-                      animate={{ pathLength: 1, opacity: [0, 0.90, 0.90, 0] }}
-                      transition={{
-                        pathLength: { duration: s.dur,  delay: s.delay, ease: LIN },
-                        opacity:    { duration: fadeDur, delay: s.delay, times: [0, t1, t2, 1] },
-                      }}
-                    />
-
-                    {/* ── Burned-in mark: fades in after drawing, stays ── */}
-                    {/* Dark ember colour at low opacity = scorched/charred look */}
-                    <motion.path
-                      d={s.d}
-                      stroke="#C0390A"
-                      strokeWidth={7}
-                      strokeLinecap="round"
-                      fill="none"
-                      filter="url(#bg)"
-                      initial={{ opacity: 0 }}
-                      animate={{ opacity: 0.40 }}
-                      transition={{ duration: 0.55, delay: drawDone + 0.10, ease: 'easeOut' }}
-                    />
-
-                    {/* ── Leading ember dot: travels the stroke, then gone ── */}
-                    <motion.circle
-                      cx={s.x1} cy={s.y1}
-                      r={4} fill="#FFF5CC"
-                      filter="url(#dg)"
-                      initial={{ opacity: 0, x: 0, y: 0 }}
-                      animate={{
-                        x: s.x2 - s.x1,
-                        y: s.y2 - s.y1,
-                        opacity: [0, 1, 1, 0],
-                      }}
-                      transition={{
-                        x:       { duration: s.dur,        delay: s.delay, ease: LIN },
-                        y:       { duration: s.dur,        delay: s.delay, ease: LIN },
-                        opacity: { duration: s.dur + 0.12, delay: s.delay },
-                      }}
-                    />
-                  </g>
-                )
-              })}
-
-              {/* Scatter particles — arc downward after drawing to seed hero embers */}
-              {SCATTER.map((p) => (
-                <motion.circle
-                  key={p.id}
-                  cx={p.cx} cy={p.cy}
-                  r={p.r} fill={p.color}
-                  filter="url(#dg)"
-                  initial={{ opacity: 0, x: 0, y: 0 }}
-                  animate={{
-                    x: [0, p.dx * 0.3, p.dx],
-                    y: [0, p.dy * 0.2, p.dy],
-                    opacity: [0, 0.95, 0.7, 0],
-                  }}
-                  transition={{ duration: 1.1, delay: p.delay, ease: [0.2, 0, 0.6, 1] }}
-                />
-              ))}
-            </svg>
+            {/* Ember particles positioned within the letter container */}
+            {EMBERS.map((e) => (
+              <motion.div
+                key={e.id}
+                className="absolute rounded-full pointer-events-none"
+                style={{
+                  left: e.l, top: e.t,
+                  width: e.sz, height: e.sz,
+                  backgroundColor: e.col,
+                  boxShadow: `0 0 ${e.sz * 2.5}px ${e.sz * 0.8}px ${e.col}80`,
+                }}
+                initial={{ opacity: 0, x: 0, y: 0 }}
+                animate={{
+                  x: [0, e.dx * 0.35, e.dx],
+                  y: [0, e.dy * 0.25, e.dy],
+                  opacity: [0, 0.95, 0.75, 0],
+                }}
+                transition={{ duration: e.dur, delay: e.delay, ease: [0.2, 0, 0.55, 1] }}
+              />
+            ))}
           </div>
 
-          {/* Wordmark — fades in once drawing is done */}
+          {/* Wordmark */}
           <motion.p
-            className="mt-6 text-sm font-semibold tracking-[0.45em] uppercase text-ember/65"
+            className="mt-8 text-sm font-semibold tracking-[0.45em] uppercase text-ember/65"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
-            transition={{ duration: 0.55, delay: 1.5, ease: EXPO }}
+            transition={{ duration: 0.55, delay: 1.65, ease: EXPO }}
           >
             EmberNorth
           </motion.p>
