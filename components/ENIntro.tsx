@@ -5,9 +5,8 @@ import { motion, AnimatePresence } from 'framer-motion'
 
 const EXPO = [0.16, 1, 0.3, 1] as const
 
-// Tune these to match the video clip length
-const BURN_AT_MS = 2400   // when fire is "done" — triggers burned state
-const HOLD_MS    = 1600   // how long to hold burned state before exiting
+const BURN_AT_MS = 2400
+const HOLD_MS    = 1600
 
 const WORDMARK: React.CSSProperties = {
   fontSize: 'clamp(2rem, 6.5vw, 4.8rem)',
@@ -23,23 +22,19 @@ export default function ENIntro() {
   const [pulsing,  setPulsing]  = useState(false)
   const videoRef = useRef<HTMLVideoElement>(null)
 
-  // Primary trigger: video ends naturally
   const handleEnded = () => setFireDone(true)
 
-  // Fallback: drive state by clock in case onEnded misfires
   useEffect(() => {
-    const burn = setTimeout(() => setFireDone(true), BURN_AT_MS)
-    return () => clearTimeout(burn)
+    const t = setTimeout(() => setFireDone(true), BURN_AT_MS)
+    return () => clearTimeout(t)
   }, [])
 
-  // After fire fades, start the ember pulse on the burned mark
   useEffect(() => {
     if (!fireDone) return
     const t = setTimeout(() => setPulsing(true), 900)
     return () => clearTimeout(t)
   }, [fireDone])
 
-  // Exit after hold period
   useEffect(() => {
     if (!fireDone) return
     const t = setTimeout(() => setShow(false), HOLD_MS)
@@ -51,10 +46,11 @@ export default function ENIntro() {
       {show && (
         <motion.div
           className="fixed inset-0 z-50 flex items-center justify-center bg-canvas overflow-hidden"
+          style={{ isolation: 'isolate' }}
           exit={{ opacity: 0 }}
           transition={{ duration: 0.75, ease: [0.32, 0, 0.67, 0] }}
         >
-          {/* Ambient heat behind the wordmark */}
+          {/* Ambient heat */}
           <motion.div
             className="pointer-events-none absolute inset-0"
             style={{
@@ -66,9 +62,9 @@ export default function ENIntro() {
             transition={{ duration: 1.8 }}
           />
 
-          {/* Wordmark stack — two layers crossfade from bright → burned */}
-          <div className="relative text-center">
-            {/* Bright layer — warm cream, glows under the fire */}
+          {/* Wordmark stack */}
+          <div className="relative z-10 text-center">
+            {/* Bright layer */}
             <motion.h1
               className="font-display"
               style={{
@@ -87,7 +83,7 @@ export default function ENIntro() {
               EmberNorth
             </motion.h1>
 
-            {/* Burned layer — dark smoldering mark, breathes slowly */}
+            {/* Burned layer */}
             <motion.h1
               className="font-display absolute inset-0"
               style={{
@@ -111,14 +107,15 @@ export default function ENIntro() {
             </motion.h1>
           </div>
 
-          {/* ── Fire video ──────────────────────────────────────────────────
-              mix-blend-mode: screen  →  black pixels become transparent,
-              fire pixels composite over the wordmark at full intensity.
-              No masking, no greenscreen — just blend math.               */}
+          {/* Fire video — screen blend, GPU-accelerated */}
           <motion.video
             ref={videoRef}
             className="pointer-events-none absolute inset-0 h-full w-full object-cover"
-            style={{ mixBlendMode: 'screen' }}
+            style={{
+              mixBlendMode: 'screen',
+              transform: 'translateZ(0)',
+              willChange: 'opacity',
+            }}
             autoPlay
             muted
             playsInline
@@ -127,7 +124,7 @@ export default function ENIntro() {
             animate={{ opacity: fireDone ? 0 : 0.92 }}
             transition={{ duration: 1.30, ease: 'easeOut' }}
           >
-            <source src="/fire-trail.mp4" type="video/mp4" />
+            <source src="/fire-trail-hq.mp4" type="video/mp4" />
           </motion.video>
         </motion.div>
       )}
